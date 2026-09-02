@@ -1,0 +1,32 @@
+Reference: "kumarOnedimensionalPhotonicCrystal2026"
+
+
+wavelength:
+  range: [900, 1700]
+  step: 0.5
+
+structure:
+  N: 5
+  angle: 0.0
+  mode: "TE"
+  perturbation: 0.5
+
+  materials:
+    substrate:
+      name: "Air"
+      refractive_index: 1.0
+    layer_a:
+      name: "Si"
+      reference: "PageID: 607, Page: Salzberg, Book: Si, Shelf: main"
+    layer_b:
+      name: "BaF2"
+      reference: "PageID: 185, Page: Malitson, Book: BaF2, Shelf: main"
+    surrounding:
+      name: "Air"
+      refractive_index: 1.0
+
+
+thicknesses:
+    layer_a: 225
+    layer_b: 50
+    defect: 2000
