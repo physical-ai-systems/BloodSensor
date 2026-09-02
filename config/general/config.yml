@@ -3,7 +3,7 @@ Reference: "kumarOnedimensionalPhotonicCrystal2026"
 
 wavelength:
   range: [900, 1700]
-  step: 0.5
+  step: 500
 
 structure:
   N: 5
@@ -11,7 +11,7 @@ structure:
   mode: "TE"
   perturbation: 0.5
 
-  materials:
+materials:
     substrate:
       name: "Air"
       refractive_index: 1.0
@@ -30,3 +30,10 @@ thicknesses:
     layer_a: 225
     layer_b: 50
     defect: 2000
+
+data_set:
+  save_generated_data_path: "/home/user2/BloodSensor/DataSet/malaria_stages.h5"
+  stages: ["normal", "ring", "trophozoite", "schizont"]
+  num_samples: 20
+  batch_size: 32
+  
