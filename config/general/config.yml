@@ -3,7 +3,7 @@ Reference: "kumarOnedimensionalPhotonicCrystal2026"
 
 wavelength:
   range: [900, 1700]
-  step: 500
+  step: 0.5
 
 structure:
   N: 5
@@ -34,6 +34,6 @@ thicknesses:
 data_set:
   save_generated_data_path: "/home/user2/BloodSensor/DataSet/malaria_stages.h5"
   stages: ["normal", "ring", "trophozoite", "schizont"]
-  num_samples: 20
+  num_samples: 40000
   batch_size: 32
   

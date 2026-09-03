@@ -24,10 +24,10 @@ def main():
     batch_size = config.data_set["batch_size"]
     perturbation = config.structure["perturbation"]
 
-    wavelength = torch.linspace(wavelengths[0], wavelengths[1],config.wavelength["step"])    
+    wavelength = torch.arange(wavelengths[0], wavelengths[1],config.wavelength["step"])    
     with h5.File(save_path, "w") as f:
-        dset_T = f.create_dataset("Transmittance", shape=(num_samples, config.wavelength["step"]), dtype='float32')
-        dset_R = f.create_dataset("Reflectance", shape=(num_samples, config.wavelength["step"]), dtype='float32')
+        dset_T = f.create_dataset("Transmittance", shape=(num_samples, len(wavelength)), dtype='float32')
+        dset_R = f.create_dataset("Reflectance", shape=(num_samples, len(wavelength)), dtype='float32')
         dset_L = f.create_dataset("labels", shape=(num_samples,), dtype='int8')
         f.create_dataset("wavelengths", data=wavelength.cpu().numpy())
         current_idx = 0
@@ -36,8 +36,8 @@ def main():
                 sensor = PhotonicSensor(N = config.structure["N"], angle=config.structure["angle"],mode=config.structure["mode"], device=device, materials=config.materials, thicknesses=config.thicknesses, wavelength_nm=wavelength, stage = stage)
                 sensor.perturbate_structure_thickness(perturbation)
                 T, R = sensor.TransferMatrixMethod(stage = stage)
-                dset_T[current_idx, :] = T
-                dset_R[current_idx, :] = R
+                dset_T[current_idx, :] = T.cpu().numpy()
+                dset_R[current_idx, :] = R.cpu().numpy()
                 dset_L[current_idx] = stage_idx
                 current_idx += 1
                 if (i + 1) % batch_size == 0:
