@@ -14,7 +14,7 @@ def main():
     parser.add_argument("--config", type=str, required=True, help="Path to the configuration YAML file.")
     args = parser.parse_args()
     config = Config.load(args.config)
-    device = get_device()
+    device = "cpu"
     print(f"Using device: {device}")
     wavelengths = config.wavelength["range"]
     save_path = config.data_set["save_generated_data_path"]

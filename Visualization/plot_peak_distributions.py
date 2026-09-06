@@ -265,5 +265,5 @@ def plot_distributions(h5_path, plot_cfg=None, wl_cfg=None):
 
 
 if __name__ == '__main__':
-    h5_path = sys.argv[1] if len(sys.argv) > 1 else '/home/user2/BloodSensor/DataSet/malaria_stages.h5'
+    h5_path = sys.argv[1] if len(sys.argv) > 1 else '/home/mohamed-elarabie/BloodSensor/DataSet/Second_Sensor_malaria_ring.h5'
     plot_distributions(h5_path)
