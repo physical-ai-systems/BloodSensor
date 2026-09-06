@@ -14,11 +14,11 @@ class PhotonicSensor:
         self.thicknesses = thicknesses
         self.wavelength_nm = wavelength_nm
         self.stage = stage
-        self.k0 = 2 * torch.pi / (wavelength_nm).to(device)  
+        self.k0 = 2 * torch.pi / (wavelength_nm).to(self.device)  
 
-        self.ri_layer_a = SiO2Dispersion().calculate_ri(wavelength_nm)
-        self.ri_layer_b = SiDispersion().calculate_ri(wavelength_nm)
-        self.ri_malaria = MalariaBloodRefractiveIndex(wavelength_nm, stage=stage).get_effective_ri()
+        self.ri_layer_a = SiO2Dispersion().calculate_ri(wavelength_nm).to(self.device)
+        self.ri_layer_b = SiDispersion().calculate_ri(wavelength_nm).to(self.device)
+        self.ri_malaria = MalariaBloodRefractiveIndex(wavelength_nm, stage=stage).get_effective_ri().to(self.device)
      
 
         self.layers = self.build_structure()
@@ -83,7 +83,8 @@ class PhotonicSensor:
 
     def p_value(self, material, mode, theta):
         """Calculates optical admittance (momentum) term."""
-        theta = torch.as_tensor(theta, dtype=torch.complex128, device=material.refractive_index.device)
+        device = material.refractive_index.device
+        theta = torch.as_tensor(theta, device=device)
         if mode == "TE":
             p = torch.cos(theta) * material.refractive_index
         elif mode == "TM":
@@ -94,20 +95,22 @@ class PhotonicSensor:
 
     def snells_law(self, n1, n2, theta1):
         """Applies Snell's law: n1 * sin(theta1) = n2 * sin(theta2)."""
-        theta1 = torch.as_tensor(theta1, dtype=torch.complex128, device=n1.device)
+        theta1 = torch.as_tensor(theta1, device=n1.device)
         sin_theta2 = (n1 / n2) * torch.sin(theta1)
         return torch.asin(sin_theta2)
 
     def transfer_matrix(self, layer, theta, mode):
         """Constructs the 2x2 characteristic matrix for a single optical layer."""
-        device = layer.material.refractive_index.device
+        device = self.k0.device
+        layer.material.refractive_index = layer.material.refractive_index.to(device)
         theta = torch.as_tensor(theta, device=device)
         p = self.p_value(layer.material, mode, theta)
         
-        M = torch.zeros((*self.k0.shape, 2, 2), device=device)
+        M = torch.zeros((*self.k0.shape, 2, 2),  device=device)
         
         # Delta phase accumulation
-        delta = layer.thickness.to(device) * layer.material.refractive_index * torch.cos(theta)
+        thickness = torch.as_tensor(layer.thickness, dtype=self.k0.real.dtype, device=device)
+        delta = thickness * layer.material.refractive_index * torch.cos(theta)
         phase = self.k0 * delta
         
         M[..., 0, 0] = torch.cos(phase)
@@ -168,7 +171,7 @@ class PhotonicSensor:
     
     def TransferMatrixMethod(self, stage):
         """Prepares the boundaries, updates the defect RI, and triggers the TMM."""
-        device = self.wavelength_nm.device
+        device = self.device
         
         # Build material mapping
         material_to_ri = {

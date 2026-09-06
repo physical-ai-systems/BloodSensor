@@ -34,8 +34,8 @@ thicknesses:
     defect: 2516
 
 data_set:
-  save_generated_data_path: "/home/user2/BloodSensor/DataSet/Second_Sensor_malaria_stages.h5"
-  stages: ["normal", "ring", "trophozoite", "schizont"]
-  num_samples: 40000
+  save_generated_data_path: "/home/mohamed-elarabie/BloodSensor/DataSet/Second_Sensor_malaria_ring.h5"
+  stages: ["normal", "ring"]
+  num_samples: 10000
   batch_size: 32
   
