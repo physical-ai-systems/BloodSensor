@@ -53,3 +53,28 @@ class SiDispersion:
         
         n_squared = 1.0 + term1 + term2 + term3
         return torch.sqrt(n_squared)
+
+class SiO2Dispersion:
+    """
+    A class to calculate and plot the Refractive Index (RI) of Silicon Dioxide (SiO2)
+    using the 3-term Sellmeier dispersion equation.
+    """
+    def __init__(self):
+        self.B1 = 0.6961663
+        self.C1 = 0.0684043 ** 2
+        self.B2 = 0.4079426
+        self.C2 = 0.1162414 ** 2
+        self.B3 = 0.8974794
+        self.C3 = 9.896161 ** 2
+
+    def calculate_ri(self, wavelength_nm):
+        """
+        Computes the Refractive Index for a given wavelength or array of wavelengths.
+        Input is in nanometers (nm), converted internally to micrometers (µm) for the formula.
+        """
+        wl_sq = wavelength_nm ** 2
+        term1 = (self.B1 * wl_sq) / (wl_sq - self.C1)
+        term2 = (self.B2 * wl_sq) / (wl_sq - self.C2)
+        term3 = (self.B3 * wl_sq) / (wl_sq - self.C3)
+        n_squared = 1.0 + term1 + term2 + term3
+        return torch.sqrt(n_squared)
