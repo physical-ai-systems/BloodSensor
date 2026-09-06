@@ -1,0 +1,41 @@
+Reference: "soviziHighlySensitiveSimultaneous2025"
+
+# Air/SiO2 /(Si/SiO2 )N /D1 /(SiO2 /Si)M /SiO2 /D2 /SiO2 /(Si/SiO2 )N /Air
+
+wavelength:
+  range: [900, 1700]
+  step: 0.5
+
+structure:
+  N: 3
+  M: 9
+  angle: 0.0
+  mode: "TE"
+  perturbation: 0.5
+
+materials:
+    substrate:
+      name: "Air"
+      refractive_index: 1.0
+    layer_a:
+      name: "SiO2"
+      reference: "PageID: 402, Page: Malitson, Book: SiO2, Shelf: main"
+    layer_b:
+      name: "Si"
+      reference: "PageID: 607, Page: Salzberg, Book: Si, Shelf: main"
+    surrounding:
+      name: "Air"
+      refractive_index: 1.0
+
+
+thicknesses:
+    layer_a: 250
+    layer_b: 163
+    defect: 2516
+
+data_set:
+  save_generated_data_path: "/home/user2/BloodSensor/DataSet/Second_Sensor_malaria_stages.h5"
+  stages: ["normal", "ring", "trophozoite", "schizont"]
+  num_samples: 40000
+  batch_size: 32
+  
