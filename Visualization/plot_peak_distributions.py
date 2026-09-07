@@ -84,13 +84,17 @@ def process_dataset(h5_path, plot_cfg=None):
 
     with h5py.File(h5_path, 'r') as f:
         total = f['Reflectance'].shape[0]
+        n_wl = f['Reflectance'].shape[1]
         class_idx_all = f['labels'][:].flatten().astype(int)
-        
-        # Load wavelengths from file or use provided ones
-        if '_wavelengths' in plot_cfg:
-            wavelengths = plot_cfg['_wavelengths']
-        else:
-            wavelengths = f['wavelengths'][:]
+
+        # Prefer dataset wavelengths; only use overrides when shape-compatible.
+        wavelengths = f['wavelengths'][:] if 'wavelengths' in f else None
+        override_wavelengths = plot_cfg.get('_wavelengths')
+        if override_wavelengths is not None and len(override_wavelengths) == n_wl:
+            wavelengths = np.asarray(override_wavelengths)
+        elif wavelengths is None or len(wavelengths) != n_wl:
+            # Last-resort fallback to index-based axis to avoid invalid indexing.
+            wavelengths = np.arange(n_wl)
 
         peak_positions = np.full((total, n_peaks), np.nan)
 
@@ -101,6 +105,7 @@ def process_dataset(h5_path, plot_cfg=None):
             for i in range(R_chunk.shape[0]):
                 dips = find_dips(R_chunk[i], n_peaks=n_peaks,
                                  min_distance=min_distance, prominence=prominence)
+                dips = dips[dips < len(wavelengths)]
                 n_found = len(dips)
                 if n_found > 0:
                     peak_positions[start + i, :n_found] = wavelengths[dips]
@@ -222,13 +227,15 @@ def plot_distributions(h5_path, plot_cfg=None, wl_cfg=None):
     if plot_cfg is None:
         plot_cfg = {}
 
-    # Build wavelengths array from config
+    # Optional wavelength override from config.
+    # If omitted, dataset wavelengths are used in process_dataset.
     if wl_cfg is None:
         wl_cfg = {}
-    wl_range = wl_cfg.get('range', [900, 1700])
-    wl_step = wl_cfg.get('step', 0.5)
-    wavelengths = np.arange(wl_range[0], wl_range[1] + wl_step, wl_step)
-    plot_cfg['_wavelengths'] = wavelengths
+    if wl_cfg:
+        wl_range = wl_cfg.get('range', [900, 1700])
+        wl_step = wl_cfg.get('step', 0.5)
+        wavelengths = np.arange(wl_range[0], wl_range[1] + wl_step, wl_step)
+        plot_cfg['_wavelengths'] = wavelengths
 
     perturbation_str = parse_perturbation(h5_path)
     cell_type = cell_type_folder = parse_cell_type_from_filename(h5_path)
@@ -265,5 +272,5 @@ def plot_distributions(h5_path, plot_cfg=None, wl_cfg=None):
 
 
 if __name__ == '__main__':
-    h5_path = sys.argv[1] if len(sys.argv) > 1 else '/home/mohamed-elarabie/BloodSensor/DataSet/Second_Sensor_malaria_ring.h5'
+    h5_path = sys.argv[1] if len(sys.argv) > 1 else '/home/mohamed-elarabie/BloodSensor/data/malaria_1dpc_2022.h5'
     plot_distributions(h5_path)

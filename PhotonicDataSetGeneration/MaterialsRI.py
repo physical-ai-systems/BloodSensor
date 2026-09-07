@@ -1,80 +1,73 @@
 import torch
 
-class BaF2Dispersion:
-    """
-    A class to calculate and plot the Refractive Index (RI) of Barium Fluoride (BaF2)
-    using the 3-term Sellmeier dispersion equation.
-    """
-    def __init__(self):
-     
-        self.B1 = 0.643356
-        self.C1 = 0.057789 ** 2
-        self.B2 = 0.506762
-        self.C2 = 0.10968 ** 2
-        self.B3 = 3.8261
-        self.C3 = 46.3864 ** 2
-
-    def calculate_ri(self, wavelength_nm):
-        """
-        Computes the Refractive Index for a given wavelength or array of wavelengths.
-        Input is in nanometers (nm), converted internally to micrometers (µm) for the formula.
-        """
-        wl_sq = wavelength_nm ** 2
-        term1 = (self.B1 * wl_sq) / (wl_sq - self.C1)
-        term2 = (self.B2 * wl_sq) / (wl_sq - self.C2)
-        term3 = (self.B3 * wl_sq) / (wl_sq - self.C3)
-        n_squared = 1.0 + term1 + term2 + term3
-        return torch.sqrt(n_squared)
-
-
 
 class SiDispersion:
     """
-    A class to calculate and plot the Refractive Index (RI) of Silicon (Si)
-    using the provided 3-term Sellmeier dispersion equation.
+    Silicon refractive index used in the 2022 malaria
+    1D photonic-crystal paper.
+
+    Wavelength input:
+        nm
+
+    Internally:
+        wavelength is converted to micrometers.
     """
-    def __init__(self):
-        self.B1 = 10.6684293
-        self.C1 = 0.301516485 ** 2
-        self.B2 = 0.0030434748
-        self.C2 = 1.13475115 ** 2
-        self.B3 = 1.54133408
-        self.C3 = 1104.0 ** 2
 
     def calculate_ri(self, wavelength_nm):
-        """
-        Computes the Refractive Index for a given wavelength or array of wavelengths.
-        Input is in nanometers (nm), converted internally to micrometers (µm).
-        """
-        wl_sq = wavelength_nm ** 2
-        term1 = (self.B1 * wl_sq) / (wl_sq - self.C1)
-        term2 = (self.B2 * wl_sq) / (wl_sq - self.C2)
-        term3 = (self.B3 * wl_sq) / (wl_sq - self.C3)
-        
-        n_squared = 1.0 + term1 + term2 + term3
+        wavelength_um = wavelength_nm / 1000.0
+        wavelength_sq = wavelength_um ** 2
+
+        # n_Si^2 = 1 + 0.0938 * lambda^2 / (lambda^2 - 0.00866)
+        n_squared = (1.0 + (0.0938 * wavelength_sq)/ (wavelength_sq - 0.00866))
+
         return torch.sqrt(n_squared)
+
 
 class SiO2Dispersion:
     """
-    A class to calculate and plot the Refractive Index (RI) of Silicon Dioxide (SiO2)
-    using the 3-term Sellmeier dispersion equation.
+    SiO2 refractive index used in the paper.
+
+    Wavelength input:
+        nm
+
+    Internally:
+        wavelength is converted to micrometers.
     """
-    def __init__(self):
-        self.B1 = 0.6961663
-        self.C1 = 0.0684043 ** 2
-        self.B2 = 0.4079426
-        self.C2 = 0.1162414 ** 2
-        self.B3 = 0.8974794
-        self.C3 = 9.896161 ** 2
 
     def calculate_ri(self, wavelength_nm):
-        """
-        Computes the Refractive Index for a given wavelength or array of wavelengths.
-        Input is in nanometers (nm), converted internally to micrometers (µm) for the formula.
-        """
-        wl_sq = wavelength_nm ** 2
-        term1 = (self.B1 * wl_sq) / (wl_sq - self.C1)
-        term2 = (self.B2 * wl_sq) / (wl_sq - self.C2)
-        term3 = (self.B3 * wl_sq) / (wl_sq - self.C3)
-        n_squared = 1.0 + term1 + term2 + term3
+        wavelength_um = wavelength_nm / 1000.0
+        wavelength_sq = wavelength_um ** 2
+
+        n_squared = (1.3107237 + (0.7935797 * wavelength_sq) / (wavelength_sq - 0.0109597) + (0.9237144 * wavelength_sq) / (wavelength_sq - 100.0))
+
         return torch.sqrt(n_squared)
+
+
+class SilverDrude:
+    """
+    Complex refractive index of silver using the Drude model
+    described in the malaria photonic-crystal paper.
+
+    Paper parameters:
+        plasma frequency = 2.18 PHz
+        damping frequency = 4.35 THz
+
+    Angular frequencies are used internally.
+    """
+
+    def __init__(self,  plasma_frequency_hz=2.18e15, damping_frequency_hz=4.35e12):
+        self.plasma_frequency_hz = plasma_frequency_hz
+        self.damping_frequency_hz = damping_frequency_hz
+
+    def calculate_ri(self, wavelength_nm):
+
+        c = 299792458.0
+        wavelength_m = wavelength_nm * 1e-9
+        omega = 2.0 * torch.pi * c / wavelength_m
+        omega_p = 2.0 * torch.pi * self.plasma_frequency_hz
+        gamma = 2.0 * torch.pi * self.damping_frequency_hz
+        # Drude dielectric function
+        epsilon = 1.0 - (omega_p ** 2 / (omega ** 2 + 1j * gamma * omega))
+        # Complex refractive index
+        n = torch.sqrt(epsilon)
+        return n
