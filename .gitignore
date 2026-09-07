@@ -1,4 +1,3 @@
+data/
 PhotonicDataSetGeneration/__pycache__/
 PhotonicDataSetGeneration/*.pyc
-*.pyc
-DataSet/
