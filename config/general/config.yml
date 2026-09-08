@@ -1,28 +1,36 @@
-# \cite(ankitaImprovedOpticalBiosensor2022) => sensor_1
-
+# ============================================================
+# Sensor 1 — Paper Reproduction
+#
+# Reference:
+# "An Improved Optical Biosensor design using
+# defect/metal multilayer photonic crystal for Malaria Diagnosis"
+# Results in Optics, 2022, 9, 100304
+#
+# Structure:
+# Air / (Si/SiO2)^3 / Ag / Blood / Ag / (Si/SiO2)^3 / Air
+# ============================================================
 
 wavelength:
-  range: [700, 900]
+  range: [760, 840]
   step: 0.1
 
-
 sensor:
+  # Reference wavelength used for quarter-wave thickness
   reference_wavelength_nm: 800.0
 
+  # Number of Si/SiO2 pairs on each side
   si_periods: 3
 
+  # Optimized configuration from the paper
   metal_thickness_nm: 15.0
-
   defect_thickness_nm: 7000.0
 
+  # Incident conditions
   angle_deg: 86.0
-
   mode: "TM"
 
-
 data_set:
-
-  save_generated_data_path: "./data/malaria_1dpc_2022.h5"
+  save_generated_data_path: "./data/validate.h5"
 
   num_samples: 4000
 

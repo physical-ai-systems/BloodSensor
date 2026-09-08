@@ -42,7 +42,7 @@ class MalariaPhotonicSensor:
         self.n_si = self.si_model.calculate_ri(self.wavelengths_nm).to(self.device)
         self.n_sio2 = self.sio2_model.calculate_ri( self.wavelengths_nm).to(self.device)
         self.n_ag = self.ag_model.calculate_ri(self.wavelengths_nm).to(self.device)
-        self.n_defect = MalariaBloodRefractiveIndex( self.wavelengths_nm, self.stage).get_effective_ri().to(self.device)
+        self.n_defect = self.get_ri( self.wavelengths_nm, self.stage).to(self.device)
         self.n_air = torch.ones_like(self.wavelengths_nm).to(self.device)
         reference_wavelength = (torch.tensor( reference_wavelength_nm, dtype=torch.float64, device=self.device))
 
@@ -51,7 +51,17 @@ class MalariaPhotonicSensor:
         self.si_thickness_nm = (reference_wavelength/ (4.0 * n_si_reference))
         self.sio2_thickness_nm = (reference_wavelength / (4.0 * n_sio2_reference))
 
-
+    def get_ri(self, wavelength_nm, stage):
+        return torch.full_like(
+            wavelength_nm,
+            {
+                "normal": 1.408,
+                "ring": 1.396,
+                "trophozoite": 1.381,
+                "schizont": 1.371,
+            }[stage],
+            dtype=torch.float64,
+        )
     def snells_law(self, n1, n2, theta1):
 
         sin_theta2 = ( n1 * torch.sin(theta1) / n2)
