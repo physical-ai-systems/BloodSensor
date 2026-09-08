@@ -1,0 +1,37 @@
+sensor:
+  angle_deg: 85.0
+  mode: "TM"
+
+  # Coupled resonators
+  N: 3
+  M: 2
+
+  # Layer thicknesses
+  si_thickness_nm: 163.0
+  sio2_thickness_nm: 250.0
+
+  # D1 and D2
+  defect_thickness_nm: 2516.0
+
+  # D2 = healthy/reference blood
+  reference_stage: "normal"
+
+
+wavelength:
+  range:
+    - 1600.0
+    - 2200.0
+
+  step: 0.1
+
+
+data_set:
+  save_generated_data_path: "Data/malaria_sensor2.h5"
+
+  num_samples: 4000
+
+  stages:
+    - normal
+    - ring
+    - trophozoite
+    - schizont

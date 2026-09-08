@@ -1,0 +1,5 @@
+class_id,stage,wavelength_nm,transmission,RI
+0,Normal,1997.6,1.0,1.3648093
+1,Ring,1994.8999999999999,0.9999961,1.361805
+2,Trophozoite,1990.1,0.9999265,1.3566343
+3,Schizont,1986.2,0.99981683,1.352307
