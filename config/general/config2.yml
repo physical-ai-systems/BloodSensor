@@ -1,3 +1,5 @@
+# \cite(soviziHighlySensitiveSimultaneous2025) => sensor_2
+
 sensor:
   angle_deg: 85.0
   mode: "TM"
