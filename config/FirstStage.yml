@@ -1,0 +1,26 @@
+layers:
+  layar_a : "Diamond"
+  layar_b : "PS"
+  layar_g : "GST"
+  layar_d : ["water", "healthy", "Thyroid"]
+  suround_in : "Air"
+  suround_out : "SiO2"
+  N : 3
+  ngtype : ["na", "nc"]
+  ndtype : ["water", "healthy", "Thyroid"]
+distances:
+  d1 : 62
+  d2 : 125
+  dg : 40
+  dd : 220
+refractive_indices:
+  n1 : 2.4168
+  n2 : 1.2
+  nAir : 1.0
+  nSiO2 : 1.46
+wavelen: 
+  wavelen_range: [450, 900]
+device: "cpu"
+dataset:
+  path: "/home/mohamed-elarabie/BloodSensor/data/first_stage.h5"
+  sample : 1

@@ -9,9 +9,9 @@
             "name": "create dataset",
             "type": "debugpy",
             "request": "launch",
-            "program": "/home/mohamed-elarabie/BloodSensor/PhotonicDataSetGeneration/Second_GenerateMalariaStagesDataSet.py",
+            "program": "/home/mohamed-elarabie/BloodSensor/BuildSensor/RunFirstStage.py",
             "console": "integratedTerminal",
-            "args": ["--config", "/home/mohamed-elarabie/BloodSensor/config/general/config2.yml"]
+            "args": ["--config", "/home/mohamed-elarabie/BloodSensor/config/FirstStage.yml"]
         }
     ]
 
